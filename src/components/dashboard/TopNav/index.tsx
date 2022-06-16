@@ -12,7 +12,6 @@ import {
     PopoverTrigger,
     PopoverContent,
     useColorModeValue,
-    useBreakpointValue,
     useDisclosure,
     useColorMode,
   } from '@chakra-ui/react';
@@ -22,11 +21,11 @@ import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import {
     HamburgerIcon,
     CloseIcon,
-    ChevronDownIcon,
     ChevronRightIcon,
   } from '@chakra-ui/icons';
 import { MobileNavItem } from './MobileNavItem';
 import NAV_ITEMS from './NAV_ITEMS';
+import { Logo } from '../../logo';
   
   export default function TopNav() {
     const { isOpen, onToggle } = useDisclosure();
@@ -58,12 +57,7 @@ import NAV_ITEMS from './NAV_ITEMS';
             />
           </Flex>
           <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-            <Text
-              textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-              fontFamily={'heading'}
-              color={useColorModeValue('gray.800', 'white')}>
-              Dashboard
-            </Text>
+            <Logo color='#fff' />
   
             <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
               <DesktopNav />

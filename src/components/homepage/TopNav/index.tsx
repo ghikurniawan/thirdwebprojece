@@ -7,7 +7,7 @@ import {
     Stack,
     Collapse,
     Icon,
-    Link,
+    Link as ChakraLink,
     Popover,
     PopoverTrigger,
     PopoverContent,
@@ -15,27 +15,65 @@ import {
     useBreakpointValue,
     useDisclosure,
     useColorMode,
+    Container,
   } from '@chakra-ui/react';
+
+import Link from 'next/link';
   
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-
+import { useScrollPosition } from "@n8tb1t/use-scroll-position";
 import {
     HamburgerIcon,
     CloseIcon,
     ChevronDownIcon,
     ChevronRightIcon,
   } from '@chakra-ui/icons';
+import { Logo } from '../../logo';
+import { useState } from 'react';
   
   export default function TopNav() {
     const { isOpen, onToggle } = useDisclosure();
     const { colorMode, toggleColorMode } = useColorMode();
-  
+    const isMobile = useBreakpointValue({ base: true, md: false });
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useScrollPosition(
+      ({ currPos }) => {
+        if (currPos.y < -5) {
+          setIsScrolled(true);
+        } else if (currPos.y >= -5) {
+          setIsScrolled(false);
+        }
+      },
+      [isMobile],
+      undefined,
+      false,
+      33,
+    );
+
     return (
-      <Box>
+      <Box
+        transition="all 100ms ease"
+        position="fixed"
+        top={0}
+        left={0}
+        w="100%"
+        zIndex="overlay"
+        as="header"
+        boxShadow={isScrolled ? "md" : undefined}
+        bg={isScrolled ? "blackAlpha.500" : "transparent"}
+        backdropFilter="blur(10px)"
+      >
+        <Container
+          maxWidth='container.xl'
+          bg={"transparent"}
+        >
+          
         <Flex
-          bg={useColorModeValue('white', 'gray.800')}
+          bg="transparent"
           color={useColorModeValue('gray.600', 'white')}
           minH={'60px'}
+          maxW={'container.xl'}
           py={{ base: 2 }}
           px={{ base: 4 }}
           borderBottom={1}
@@ -56,12 +94,7 @@ import {
             />
           </Flex>
           <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-            <Text
-              textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-              fontFamily={'heading'}
-              color={useColorModeValue('gray.800', 'white')}>
-              Home
-            </Text>
+            <Logo color='#fff' />
   
             <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
               <DesktopNav />
@@ -84,6 +117,7 @@ import {
             <Button onClick={toggleColorMode}>
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
             </Button>
+            <Link href="/dashboard">
             <Button
               display={{ base: 'none', md: 'inline-flex' }}
               fontSize={'sm'}
@@ -93,14 +127,17 @@ import {
               _hover={{
                 bg: 'pink.300',
               }}>
-              Sign Up
+              Get Started
             </Button>
+            </Link>
           </Stack>
         </Flex>
   
         <Collapse in={isOpen} animateOpacity>
           <MobileNav />
         </Collapse>
+
+        </Container>
       </Box>
     );
   }
@@ -116,7 +153,7 @@ import {
           <Box key={navItem.label}>
             <Popover trigger={'hover'} placement={'bottom-start'}>
               <PopoverTrigger>
-                <Link
+                <ChakraLink
                   p={2}
                   href={navItem.href ?? '#'}
                   fontSize={'sm'}
@@ -127,7 +164,7 @@ import {
                     color: linkHoverColor,
                   }}>
                   {navItem.label}
-                </Link>
+                </ChakraLink>
               </PopoverTrigger>
   
               {navItem.children && (
@@ -154,7 +191,7 @@ import {
   
   const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
     return (
-      <Link
+      <ChakraLink
         href={href}
         role={'group'}
         display={'block'}
@@ -182,7 +219,7 @@ import {
             <Icon color={'pink.400'} w={5} h={5} as={ChevronRightIcon} />
           </Flex>
         </Stack>
-      </Link>
+      </ChakraLink>
     );
   };
   
@@ -206,7 +243,7 @@ import {
       <Stack spacing={4} onClick={children && onToggle}>
         <Flex
           py={2}
-          as={Link}
+          as={ChakraLink}
           href={href ?? '#'}
           justify={'space-between'}
           align={'center'}
@@ -239,9 +276,9 @@ import {
             align={'start'}>
             {children &&
               children.map((child) => (
-                <Link key={child.label} py={2} href={child.href}>
+                <ChakraLink key={child.label} py={2} href={child.href}>
                   {child.label}
-                </Link>
+                </ChakraLink>
               ))}
           </Stack>
         </Collapse>
@@ -257,42 +294,43 @@ import {
   }
   
   const NAV_ITEMS: Array<NavItem> = [
+    
     {
-      label: 'Inspiration',
+      label: 'Section 1',
+      href: '#section1',
+    },
+    {
+      label: 'Section 2',
+      href: '#section2',
+    },
+    {
+      label: 'Dropdown1',
       children: [
         {
-          label: 'Explore Design Work',
-          subLabel: 'Trending Design to inspire you',
+          label: 'Link1',
+          subLabel: 'Description',
           href: '#',
         },
         {
-          label: 'New & Noteworthy',
-          subLabel: 'Up-and-coming Designers',
+          label: 'Link2',
+          subLabel: 'Description',
           href: '#',
         },
       ],
     },
     {
-      label: 'Find Work',
+      label: 'Dropdown2',
       children: [
         {
-          label: 'Job Board',
-          subLabel: 'Find your dream design job',
+          label: 'Link1',
+          subLabel: 'Description',
           href: '#',
         },
         {
-          label: 'Freelance Projects',
-          subLabel: 'An exclusive list for contract work',
+          label: 'Link2',
+          subLabel: 'Description',
           href: '#',
         },
       ],
-    },
-    {
-      label: 'Learn Design',
-      href: '#',
-    },
-    {
-      label: 'Hire Designers',
-      href: '#',
     },
   ];

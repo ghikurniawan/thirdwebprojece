@@ -1,3 +1,4 @@
+import { HomepageFooter } from "../Footer";
 import TopNav from "../TopNav";
 
 type LayoutProps = {
@@ -9,6 +10,7 @@ return (
     <>
         <TopNav/>
         {props.children}
+        <HomepageFooter/>
     </>
 )
 }
