@@ -12,14 +12,13 @@ import {
     Stack,
     useToast,
   } from "@chakra-ui/react";
-  import { Logo } from "../logo";
+  import { Logo } from "@/components/logo";
   import {
     SiDiscord,
     SiGithub,
     SiInstagram,
     SiTwitter,
   } from "react-icons/si";
-import { LinkIcon } from "@chakra-ui/icons";
 import Link from "next/link";
   
   export const HomepageFooter: React.FC = () => {

@@ -1,8 +1,8 @@
 import { useAddress, useDisconnect } from "@thirdweb-dev/react";
 import { useRouter } from "next/router";
 import { ReactElement } from "react";
-import Layout from "../../components/dashboard/Layout";
-import NoWallet from "../../components/dashboard/NoWallet";
+import Layout from "@/components/dashboard/Layout";
+import NoWallet from "@/components/dashboard/NoWallet";
 
 export default function Dashboard() {
     const disconnectWallet = useDisconnect();

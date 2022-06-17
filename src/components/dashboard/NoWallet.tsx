@@ -8,7 +8,7 @@ import {
   useColorModeValue,
   createIcon,
 } from '@chakra-ui/react';
-import ConnectWallet from '../button/ConnectWallet';
+import ConnectWallet from '@/components/button/ConnectWallet';
 
 export default function NoWallet() {
   return (

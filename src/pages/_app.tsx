@@ -2,6 +2,7 @@ import type { AppProps } from 'next/app';
 import { ChakraProvider } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import { ReactElement, ReactNode } from 'react';
+import { DefaultSeo } from 'next-seo';
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -16,9 +17,22 @@ function AwesomeApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
-    <ChakraProvider>
-        {getLayout(<Component {...pageProps} />)}
-    </ChakraProvider>
+    <>
+      <DefaultSeo
+          defaultTitle="Dashboard | Nitrous Oxide Snail"
+          titleTemplate="%s | Nitrous Oxide Snail"
+          description="Nitrous Oxide Snail is generative 5.555 NFT on ethereum blockchain."
+          additionalLinkTags={[
+            {
+              rel: "icon",
+              href: "/speedsnail_icon.svg",
+            },
+          ]}
+        />
+      <ChakraProvider>
+          {getLayout(<Component {...pageProps} />)}
+      </ChakraProvider>
+    </>
   );
 }
 

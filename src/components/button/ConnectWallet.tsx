@@ -10,7 +10,7 @@ import {
   } from '@chakra-ui/react';
 import {MdAccountBalanceWallet} from 'react-icons/md'
 import { useMagic, useMetamask, useWalletConnect, useWalletLink } from '@thirdweb-dev/react';
-import { Coinbase, MagicLink, MetaMask, Walletconnect } from '../../utils/Logo';
+import { Coinbase, MagicLink, MetaMask, Walletconnect } from '@/utils/Logo';
 
   export default function ConnectWallet() {
       const connectWithMetamask = useMetamask()

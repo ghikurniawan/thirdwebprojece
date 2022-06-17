@@ -28,7 +28,7 @@ import {
     ChevronDownIcon,
     ChevronRightIcon,
   } from '@chakra-ui/icons';
-import { Logo } from '../../logo';
+import { Logo } from '@/components/logo';
 import { useState } from 'react';
   
   export default function TopNav() {

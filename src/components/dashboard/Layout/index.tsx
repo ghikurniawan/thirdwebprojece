@@ -1,13 +1,11 @@
 import { Button, ButtonGroup, Container, Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
 import { ChainId, ThirdwebProvider, IpfsStorage} from "@thirdweb-dev/react";
 import { SiDiscord, SiGithub, SiInstagram, SiTwitter } from "react-icons/si";
-import TopNav from "../TopNav";
-import settings from '../../../utils/settings.json'
+import TopNav from "@/components/dashboard/TopNav";
+import settings from '@/utils/settings.json'
 type LayoutProps = {
     children: React.ReactNode; // 👈️ type children
-  };
-  // This is the chainId your dApp will work on.
-  const activeChainId = ChainId.Goerli;
+};
 
 export default function Layout(props : LayoutProps) {
 
@@ -20,7 +18,7 @@ return (
                     name: "Awesome DApp",
                     description: "This is an example awesome dapp",
                     isDarkMode: false,
-                    logoUrl: "/speedsnail_icon.svg",
+                    logoUrl: "@/assets/thirdweb.svg",
                     url: "https://awesome.com",
                 }}
             // supportedChains={[ChainId.Mainnet]}
@@ -58,11 +56,13 @@ return (
         >
             <TopNav/>
             {props.children}
+
         </ThirdwebProvider>
+
         <Container as="footer" maxW="container.page" w="100%" py={4} position="fixed" bottom="0" borderTop="1px" borderColor="gray.600">
             <Stack direction="row" spacing="4" align="center" justify="center">
                 <Text alignSelf="center">
-                    thirdweb &copy; {new Date().getFullYear()}
+                    Nitrous Oxide Snail &copy; {new Date().getFullYear()}
                 </Text>
                 <ButtonGroup variant="ghost">
                     <ChakraLink href="https://twitter.com" isExternal>

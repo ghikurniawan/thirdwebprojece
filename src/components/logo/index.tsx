@@ -66,8 +66,7 @@ export const Logo: React.FC<ILogoProps> = ({
         <Wordmark
           display={{ base: "none", md: "block" }}
           color={color}
-          w={[24, 24, 28]}
-          flexShrink={0}
+          w={[5, 5, 100]}
         />
       )}
       <VisuallyHidden>Logo</VisuallyHidden>
@@ -125,3 +124,6 @@ export const SnailIcon: React.FC<Omit<AspectRatioProps, "ratio">> =({
           </AspectRatio>
           );
     };
+
+
+    

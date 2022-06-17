@@ -1,17 +1,21 @@
 import Link from 'next/link';
 import { ReactElement } from 'react';
-import Layout from '../components/homepage/Layout';
-import { HomepageSection } from '../components/homepage/Section';
+import Layout from '@/components/homepage/Layout';
+import { HomepageSection } from '@/components/homepage/Section';
 import {
   Heading,
   Stack,
   Text,
   Button,
 } from '@chakra-ui/react';
+import { NextSeo } from 'next-seo';
 
 export default function Home(){
   return (
     <div>
+      <NextSeo 
+        title='Home'
+      />
       <HomepageSection id="home" topGradient bottomPattern >
       <Stack
         textAlign={'center'}

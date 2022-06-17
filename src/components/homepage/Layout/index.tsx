@@ -1,5 +1,5 @@
-import { HomepageFooter } from "../Footer";
-import TopNav from "../TopNav";
+import { HomepageFooter } from "@/components/homepage/Footer";
+import TopNav from "@/components/homepage/TopNav";
 
 type LayoutProps = {
     children: React.ReactNode; // 👈️ type children

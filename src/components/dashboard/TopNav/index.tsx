@@ -17,9 +17,8 @@ import {
   useColorMode,
   Container,
   ButtonGroup,
+  Center,
 } from '@chakra-ui/react';
-
-import Link from 'next/link';
 
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { useScrollPosition } from "@n8tb1t/use-scroll-position";
@@ -29,10 +28,10 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from '@chakra-ui/icons';
-import { Logo } from '../../logo';
+import { Logo } from '@/components/logo';
 import { useState } from 'react';
-import { useAddress } from '@thirdweb-dev/react';
-import Connected from '../../button/Connected';
+import { useAddress, useNetworkMismatch } from '@thirdweb-dev/react';
+import Connected from '@/components/button/Connected';
 import { SiDiscord, SiGithub, SiInstagram, SiTwitter } from 'react-icons/si';
 
 export default function TopNav() {
@@ -41,6 +40,7 @@ export default function TopNav() {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [isScrolled, setIsScrolled] = useState(false);
   const address = useAddress()
+  const networkMisMatch = useNetworkMismatch()
 
   useScrollPosition(
     ({ currPos }) => {
@@ -57,6 +57,7 @@ export default function TopNav() {
   );
 
   return (
+    <>
     <Box
       transition="all 100ms ease"
       position="fixed"
@@ -135,7 +136,25 @@ export default function TopNav() {
       </Collapse>
 
       </Container>
+
+      {networkMisMatch ? (
+        <Box
+        background="red" 
+        zIndex="overlay">
+          <Center>
+            {/* @ts-ignore ts-message: Unreachable code error */}
+            <marquee width="100%" direction="right" >
+              <Text fontSize="2xl" color="white">
+                Wrong Network !! Please switch to {networkMisMatch}
+              </Text>
+            {/* @ts-ignore ts-message: Unreachable code error */}
+            </marquee>
+          </Center>
+        </Box>
+      ) : null}
     </Box>
+    
+    </>
   );
 }
 

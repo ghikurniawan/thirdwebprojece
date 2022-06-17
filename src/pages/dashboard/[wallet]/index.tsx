@@ -1,8 +1,7 @@
 import { useAddress, useDisconnect, useMetamask } from "@thirdweb-dev/react";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect } from "react";
-import Layout from "../../../components/dashboard/Layout";
-import NoWallet from "../../../components/dashboard/NoWallet";
+import Layout from "@/components/dashboard/Layout";
 
 export default function Wallet() {
     const connectWithMetamask = useMetamask();
