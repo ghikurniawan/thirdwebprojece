@@ -27,7 +27,7 @@ import Link from "next/link";
   
     return (
       <Box bgColor="#111315" zIndex="100">
-        <Container as="footer" maxW="container.page" color="gray.500">
+        <Container as="footer" maxW="container.xl" color="gray.500">
           <DarkMode>
             <Divider borderColor="rgba(255,255,255,0.1)" />
           </DarkMode>

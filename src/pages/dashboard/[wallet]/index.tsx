@@ -2,6 +2,7 @@ import { useAddress, useDisconnect, useMetamask } from "@thirdweb-dev/react";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect } from "react";
 import Layout from "../../../components/dashboard/Layout";
+import NoWallet from "../../../components/dashboard/NoWallet";
 
 export default function Wallet() {
     const connectWithMetamask = useMetamask();
@@ -15,7 +16,7 @@ export default function Wallet() {
   return (
     <div>
         {!address ? (
-           <button onClick={connectWithMetamask}>Connect with Metamask</button>
+           null
         ) : (
             <>
               <button onClick={disconnectWallet}>Disconnect Wallet</button>

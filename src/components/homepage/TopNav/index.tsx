@@ -63,6 +63,9 @@ import { useState } from 'react';
         boxShadow={isScrolled ? "md" : undefined}
         bg={isScrolled ? "blackAlpha.500" : "transparent"}
         backdropFilter="blur(10px)"
+        borderBottom={1}
+        borderStyle={'solid'}
+        borderColor={useColorModeValue('gray.400', 'gray.900')}
       >
         <Container
           maxWidth='container.xl'
@@ -73,12 +76,8 @@ import { useState } from 'react';
           bg="transparent"
           color={useColorModeValue('gray.600', 'white')}
           minH={'60px'}
-          maxW={'container.xl'}
           py={{ base: 2 }}
           px={{ base: 4 }}
-          borderBottom={1}
-          borderStyle={'solid'}
-          borderColor={useColorModeValue('gray.200', 'gray.900')}
           align={'center'}>
           <Flex
             flex={{ base: 1, md: 'auto' }}
@@ -94,7 +93,7 @@ import { useState } from 'react';
             />
           </Flex>
           <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-            <Logo color='#fff' />
+            <Logo color='var(--chakra-colors-chakra-body-text)' />
   
             <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
               <DesktopNav />
@@ -122,10 +121,10 @@ import { useState } from 'react';
               display={{ base: 'none', md: 'inline-flex' }}
               fontSize={'sm'}
               fontWeight={600}
-              color={'white'}
-              bg={'pink.400'}
+              color={'gray.800'}
+              bg={'gray.400'}
               _hover={{
-                bg: 'pink.300',
+                bg: 'gray.300',
               }}>
               Get Started
             </Button>
