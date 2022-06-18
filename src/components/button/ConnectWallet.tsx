@@ -7,20 +7,41 @@ import {
     Button,
     Stack,
     Flex,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
+    FormControl,
+    FormLabel,
+    Input,
+    ModalFooter,
+    useDisclosure,
   } from '@chakra-ui/react';
 import {MdAccountBalanceWallet} from 'react-icons/md'
 import { useMagic, useMetamask, useWalletConnect, useWalletLink } from '@thirdweb-dev/react';
 import { Coinbase, MagicLink, MetaMask, Walletconnect } from '@/utils/Logo';
+import { useRef } from 'react';
+import { useState } from 'react';
 
   export default function ConnectWallet() {
+    
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const initialRef = useRef(null)
+    const finalRef = useRef(null)
+
       const connectWithMetamask = useMetamask()
       const connectWtihWalletConnect = useWalletConnect()
         const connetWtihWalletLink = useWalletLink()
         const connectWithemail = useMagic()
+        const [email, setEmail] = useState()
+
     return (
       /**
        * You may move the Popover outside Flex.
        */
+      <>
       <Flex justifyContent="center" mt={4}>
         <Popover placement="bottom" isLazy>
           <PopoverTrigger>
@@ -70,8 +91,8 @@ import { Coinbase, MagicLink, MetaMask, Walletconnect } from '@/utils/Logo';
                   leftIcon={<MagicLink />}
                   justifyContent="start"
                   fontWeight="normal"
-                  onClick={connectWithemail}
-                  disabled
+                  onClick={onOpen}
+                  // disabled
                   fontSize="sm">
                   Email Wallet (magic)
                 </Button>
@@ -80,5 +101,31 @@ import { Coinbase, MagicLink, MetaMask, Walletconnect } from '@/utils/Logo';
           </PopoverContent>
         </Popover>
       </Flex>
+
+        <Modal
+          initialFocusRef={initialRef}
+          finalFocusRef={finalRef}
+          isOpen={isOpen}
+          onClose={onClose}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Create your account</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
+              <FormControl>
+                <FormLabel>Email</FormLabel>
+                <Input required type="email" ref={initialRef} placeholder='mail@example.com' onChange={(e) => setEmail(e.target.value as any)} />
+              </FormControl>
+            </ModalBody>
+  
+            <ModalFooter>
+              <Button colorScheme='blue' mr={3} onClick={() => connectWithemail({email})}>
+                Connect
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </>
     );
   }

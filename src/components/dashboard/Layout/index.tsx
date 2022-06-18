@@ -2,25 +2,54 @@ import { Button, ButtonGroup, Container, Link as ChakraLink, Stack, Text } from 
 import { ChainId, ThirdwebProvider, IpfsStorage} from "@thirdweb-dev/react";
 import { SiDiscord, SiGithub, SiInstagram, SiTwitter } from "react-icons/si";
 import TopNav from "@/components/dashboard/TopNav";
-import settings from '@/utils/settings.json'
+import { settings } from '@/utils/settings'
+
 type LayoutProps = {
     children: React.ReactNode; // 👈️ type children
 };
 
 export default function Layout(props : LayoutProps) {
 
+    const connector = [
+        "walletConnect", 
+        { name: "injected", 
+            options: { 
+            shimDisconnect: false 
+        } 
+        },
+        {
+            name: "walletLink",
+            options: {
+                appName: settings.appName,
+            }
+        },
+        {
+            name: "magic",
+            options: {
+              apiKey: process.env.NEXT_PUBLIC_MAGIC_KEY,
+            }
+        },
+        {
+            name: "gnosis",
+            options: {
+                safeAddress: "",
+                safeChainId: settings.chain_id,
+            }
+        },
+    ]
+
 return (
     <>
         <ThirdwebProvider
-                desiredChainId={settings.chain_id}
-                chainRpc={{ [ChainId[settings.chain_id]]: settings.rpcUrl}}
-                dAppMeta={{
-                    name: "Awesome DApp",
-                    description: "This is an example awesome dapp",
-                    isDarkMode: false,
-                    logoUrl: "@/assets/thirdweb.svg",
-                    url: "https://awesome.com",
-                }}
+            desiredChainId={settings.chain_id}
+            chainRpc={{ [ChainId[settings.chain_id]]: settings.rpcUrl}}
+            dAppMeta={{
+                name: settings.appName,
+                description: settings.appDescription,
+                isDarkMode: true,
+                logoUrl: settings.logoUrl,
+                url: settings.websiteUrl,
+            }}
             // supportedChains={[ChainId.Mainnet]}
             storageInterface={new IpfsStorage(settings.ipfsGateway)}
             sdkOptions={{
@@ -30,29 +59,8 @@ return (
                 rpcUrl: settings.rpcUrl,
                 },
             }}
-            walletConnectors={[
-                "walletConnect", 
-                { name: "injected", 
-                options: { 
-                    shimDisconnect: false 
-                } 
-                },
-                {
-                name: "walletLink",
-                options: {
-                    appName: "Example App",
-                }
-                },
-                {
-                name: "magic",
-                options: {
-                    apiKey: "pk_live_73DD69426B8E2A24",
-                    rpcUrls: {
-                    [ChainId[settings.chain_id]]: settings.rpcUrl,
-                    },
-                },
-                },
-            ]}
+            // @ts-ignore
+            walletConnectors={connector}
         >
             <TopNav/>
             {props.children}
@@ -62,7 +70,7 @@ return (
         <Container zIndex="overlay" as="footer" maxW="container.page" w="100%" py={4} position="fixed" bottom="0" borderTop="1px" borderColor="gray.600">
             <Stack direction="row" spacing="4" align="center" justify="center">
                 <Text alignSelf="center">
-                    Nitrous Oxide Snail &copy; {new Date().getFullYear()}
+                    {settings.appName} &copy; {new Date().getFullYear()}
                 </Text>
                 <ButtonGroup variant="ghost">
                     <ChakraLink href="https://twitter.com" isExternal>

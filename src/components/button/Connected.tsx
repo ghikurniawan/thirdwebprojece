@@ -15,14 +15,27 @@ import {
     Badge,
     PopoverFooter,
     useColorModeValue,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    FormLabel,
+    Input,
+    ModalFooter,
+    Modal,
+    ModalBody,
+    FormControl,
+    useDisclosure,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { RiShutDownLine } from 'react-icons/ri';
-import { useActiveChainId, useAddress, useBalance, useDisconnect, useNetwork , useNetworkMismatch } from '@thirdweb-dev/react';
+import { useActiveChainId, useConnect ,useAddress, useBalance, useDisconnect, useGnosis, useNetwork , useNetworkMismatch, useProvider } from '@thirdweb-dev/react';
 import { ArrowDownIcon, CopyIcon } from '@chakra-ui/icons';
-import { MdNetworkWifi } from 'react-icons/md';
-import { GnosisSafe, MetaMask } from '@/utils/Logo';
+import { MdAccountBalanceWallet, MdNetworkWifi } from 'react-icons/md';
+import { Coinbase, GnosisSafe, MagicLink, MetaMask, Walletconnect } from '@/utils/Logo';
 import { IndicatorActive } from '../dashboard/ActiveIndicator';
+import { useRef } from 'react';
+import { createRef } from 'react';
   
 
 
@@ -34,11 +47,25 @@ import { IndicatorActive } from '../dashboard/ActiveIndicator';
       const [copy, setCopy] = useState(false)
       const activeChain = useActiveChainId()
       const networkMisMatch = useNetworkMismatch()
-      const [
-        {
-          data: { chain, chains },
-          loading,
-          error,
+      const connectWithGnosis = useGnosis()
+
+      const { isOpen, onOpen, onClose } = useDisclosure()
+      const safeRef = useRef(null)
+      const [safeAddress, setSafeAddress] = useState("")
+      const [loading, setLoading] = useState(false)
+
+      const [{data : {
+        connected, 
+        connector,
+        connectors,
+
+      }, 
+      error : connectError,
+
+    }]= useConnect()
+
+      const  [{
+          data: { chain, chains }
         },
         switchNetwork,
       ] = useNetwork();
@@ -47,11 +74,44 @@ import { IndicatorActive } from '../dashboard/ActiveIndicator';
         // @ts-ignore - this is a valid chain id
         await switchNetwork(activeChain);
       }
+
+      const handlePaste = (e : any) => {
+        var clipboardData, pastedData;
+
+        // Stop data actually being pasted into div
+        e.stopPropagation();
+        e.preventDefault();
+
+        // Get pasted data via clipboard API
+        clipboardData = e.clipboardData;
+        pastedData = clipboardData.getData('Text');
+        
+        // Do whatever with pasteddata
+        let pattern = /0x[a-fA-F0-9]{40}/g
+        let match = pattern.exec(pastedData)
+        // @ts-ignore
+        safeRef.current.value = match
+        setSafeAddress(match?.input as any)
+      }
+
+      const handleConnectWithGnosis = () => {
+        setLoading(true)
+        connectWithGnosis({ safeAddress: safeAddress, safeChainId: chain?.id as number })
+        .then(data => {
+          setLoading(false)
+          onClose()
+        })
+        .catch(error => {
+          setLoading(false)
+          console.log(error)
+        })
+      }
+      
+
       useEffect(() => {
-        if(loading || error) {
-          console.log(loading, error)
-        }
-      }, [loading, error])
+        console.log("from useNetwork -> ",connectError, connected , connector?.name , connectors)
+        
+      }, [connectError, connected, connector, connectors])
 
       useEffect(() => {
         if(balance) {
@@ -67,6 +127,22 @@ import { IndicatorActive } from '../dashboard/ActiveIndicator';
         }
       }, [copy])
 
+      function showLogo () {
+        switch(connector?.name) {
+          case "MetaMask":
+            return <MetaMask />
+          case "WalletConnect":
+            return <Walletconnect />
+          case "Coinbase Wallet":
+            return <Coinbase />
+          case "Gnosis Safe":
+            return <GnosisSafe />
+          case "Magic":
+            return <MagicLink />
+          default:
+            return <MdAccountBalanceWallet />
+        }
+      }
 
     return (
       /**
@@ -76,9 +152,12 @@ import { IndicatorActive } from '../dashboard/ActiveIndicator';
         <Popover placement="bottom" isLazy matchWidth>
           <PopoverTrigger>
             <ButtonGroup size='md' isAttached variant='outline' borderColor={useColorModeValue('gray.400', 'gray.600')}>
-                <Button leftIcon={<IndicatorActive active />} colorScheme='gray' variant='outline' rightIcon={<MetaMask />} width="min-content">
+                <Button leftIcon={<IndicatorActive active />} colorScheme='gray' variant='outline' rightIcon={showLogo()} width="min-content">
                     <Stack spacing={0}>
-                        <Text fontSize='xs'>{balanceOf.slice(0, 4) + " " + balance?.symbol}</Text>
+                        {balance ? 
+                        <Text fontSize='xs'>
+                          {balanceOf.slice(0, 4) + " " + balance?.symbol}
+                        </Text>: null }
                         <Text fontSize='xs'>{address?.slice(0,5) + '...' + address?.slice(-3) + `(${chain?.name})`}</Text>
                     </Stack>
                 </Button>
@@ -135,11 +214,14 @@ import { IndicatorActive } from '../dashboard/ActiveIndicator';
                 <Button
                   w="194px"
                   variant="ghost"
+                  colorScheme={connector?.name === "Gnosis Safe" ? "green" : "gray"}
                   leftIcon={<GnosisSafe />}
                   justifyContent="start"
                   fontWeight="normal"
+                  onClick={onOpen}
+                  disabled={connector?.name === "Gnosis Safe"}
                   fontSize="sm">
-                  Gnosis Safe
+                  Gnosis Safe {connector?.name === "Gnosis Safe" ? "Connected" : null}
                 </Button>
               </Stack>
             </PopoverBody>
@@ -157,6 +239,29 @@ import { IndicatorActive } from '../dashboard/ActiveIndicator';
             </PopoverFooter>
           </PopoverContent>
         </Popover>
+
+        <Modal
+          isOpen={isOpen}
+          onClose={onClose}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Connect With Gnosis Safe</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
+              <FormControl>
+                <FormLabel>Safe Address</FormLabel>
+                <Input required type="text" ref={safeRef} placeholder='net:0x000000000000000000000000000000000000' onChange={(e) => setSafeAddress(e.target.value as any)} onPaste={(e) => handlePaste(e)}/>
+              </FormControl>
+            </ModalBody>
+  
+            <ModalFooter>
+              <Button isLoading={loading} colorScheme='blue' mr={3} onClick={() => handleConnectWithGnosis()}>
+                Connect
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Flex>
     );
   }

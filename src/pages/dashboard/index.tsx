@@ -1,21 +1,31 @@
-import { useAddress, useDisconnect } from "@thirdweb-dev/react";
+import { useAddress, useNetwork } from "@thirdweb-dev/react";
 import { useRouter } from "next/router";
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import Layout from "@/components/dashboard/Layout";
 import NoWallet from "@/components/dashboard/NoWallet";
 import { HomepageSection } from "@/components/homepage/Section";
-import { Button, Center, Flex, Heading, Stack, Text } from "@chakra-ui/react";
-import Link from "next/link";
+import { Flex} from "@chakra-ui/react";
 import MintCard from "@/components/dashboard/MintCard";
 
 export default function Dashboard() {
-    const disconnectWallet = useDisconnect();
     const router = useRouter();
     const address = useAddress();
 
+    const  [{
+      data: { chain, chains },
+      loading,
+      error,
+    },
+    switchNetwork,
+  ] = useNetwork();
+
+  useEffect(() => {
+    console.log(loading)
+  }, [loading]);
+
   return (
     <div>
-        {!address ? (
+        {!address && !loading ? (
             <NoWallet />
           ) : 
           <HomepageSection topGradient>

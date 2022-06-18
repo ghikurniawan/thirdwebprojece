@@ -1,7 +1,7 @@
 import { useContract } from "@thirdweb-dev/react";
 import { ethers } from "ethers";
 import MerkleTree from "merkletreejs";
-import settings from "@/utils/settings.json"
+import {settings} from "@/utils/settings";
 
 import { useState } from "react";
 

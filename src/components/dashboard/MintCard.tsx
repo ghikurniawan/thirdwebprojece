@@ -10,7 +10,7 @@ import {
   } from '@chakra-ui/react';
   
   const IMAGE =
-    'https://www.speedsnail.me/assets/conyverse.gif';
+    '/assets/conyverse.gif';
   
   export default function MintCard() {
     return (
