@@ -29,8 +29,8 @@ import {
   ChevronRightIcon,
 } from '@chakra-ui/icons';
 import { Logo } from '@/components/logo';
-import { useState } from 'react';
-import { useAddress, useNetworkMismatch } from '@thirdweb-dev/react';
+import {  useState } from 'react';
+import { useAddress, useNetworkMismatch, useActiveChainId , ChainId, useNetwork } from '@thirdweb-dev/react';
 import Connected from '@/components/button/Connected';
 import { SiDiscord, SiGithub, SiInstagram, SiTwitter } from 'react-icons/si';
 
@@ -41,6 +41,7 @@ export default function TopNav() {
   const [isScrolled, setIsScrolled] = useState(false);
   const address = useAddress()
   const networkMisMatch = useNetworkMismatch()
+  const activeChain = useActiveChainId()
 
   useScrollPosition(
     ({ currPos }) => {
@@ -71,8 +72,23 @@ export default function TopNav() {
       backdropFilter="blur(10px)"
       borderBottom={1}
         borderStyle={'solid'}
-        borderColor={useColorModeValue('gray.400', 'gray.900')}
+        borderColor={useColorModeValue('gray.400', 'gray.600')}
     >
+      {networkMisMatch ? (
+        <Box
+        background="red" 
+        zIndex="overlay">
+          <Center>
+            {/* @ts-ignore ts-message: Unreachable code error */}
+            <marquee width="100%" direction="right" >
+              <Text fontSize="large" color="white">
+                Wrong Network !! Please switch to {ChainId[activeChain || 1]}
+              </Text>
+            {/* @ts-ignore ts-message: Unreachable code error */}
+            </marquee>
+          </Center>
+        </Box>
+      ) : null}
       <Container
         maxWidth='container.xl'
         bg={"transparent"}
@@ -136,22 +152,18 @@ export default function TopNav() {
       </Collapse>
 
       </Container>
-
-      {networkMisMatch ? (
-        <Box
-        background="red" 
-        zIndex="overlay">
+      <Flex
+        display={{ base: 'none', md: 'flex' }}
+      >
+        <Container
+          maxWidth='container.xl'
+          pb={4}
+        >
           <Center>
-            {/* @ts-ignore ts-message: Unreachable code error */}
-            <marquee width="100%" direction="right" >
-              <Text fontSize="2xl" color="white">
-                Wrong Network !! Please switch to {networkMisMatch}
-              </Text>
-            {/* @ts-ignore ts-message: Unreachable code error */}
-            </marquee>
+            <DesktopNav />
           </Center>
-        </Box>
-      ) : null}
+        </Container>
+      </Flex>
     </Box>
     
     </>

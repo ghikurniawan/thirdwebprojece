@@ -59,7 +59,7 @@ return (
 
         </ThirdwebProvider>
 
-        <Container as="footer" maxW="container.page" w="100%" py={4} position="fixed" bottom="0" borderTop="1px" borderColor="gray.600">
+        <Container zIndex="overlay" as="footer" maxW="container.page" w="100%" py={4} position="fixed" bottom="0" borderTop="1px" borderColor="gray.600">
             <Stack direction="row" spacing="4" align="center" justify="center">
                 <Text alignSelf="center">
                     Nitrous Oxide Snail &copy; {new Date().getFullYear()}
