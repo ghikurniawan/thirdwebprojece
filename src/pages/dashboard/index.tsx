@@ -1,41 +1,92 @@
-import { useAddress, useNetwork } from "@thirdweb-dev/react";
-import { useRouter } from "next/router";
-import { ReactElement, useEffect } from "react";
+import { useAddress, useContract} from "@thirdweb-dev/react";
+import { ReactElement, useEffect, useState } from "react";
 import Layout from "@/components/dashboard/Layout";
 import NoWallet from "@/components/dashboard/NoWallet";
+import { Box, Container, Flex, SimpleGrid, Text} from "@chakra-ui/react";
 import { HomepageSection } from "@/components/homepage/Section";
-import { Flex} from "@chakra-ui/react";
-import MintCard from "@/components/dashboard/MintCard";
+import NFT from "@/components/card/NFT";
+import { settings } from "@/utils/settings";
+import NFTSkeleton from "@/components/card/NFTSkeleton";
+
+
+const NFTContract = settings.contractAddress
 
 export default function Dashboard() {
-    const router = useRouter();
-    const address = useAddress();
+  const address = useAddress()
+  const [metadataOwned, setMetadataOwned] =  useState(Array<any>())
+  const [noNFT, setNoNFT] = useState(true)
+  const [skeleton, setSkeleton] = useState(true)
 
-    const  [{
-      data: { chain, chains },
-      loading,
-      error,
-    },
-    switchNetwork,
-  ] = useNetwork();
+  const {
+    contract,
+    data,
+    isLoading,
+    isFetching,
+    status,
+    isFetched,
+  } = useContract(NFTContract)
 
   useEffect(() => {
-    console.log(loading)
-  }, [loading]);
+    if(!address) return;
+    if(status === "success" && metadataOwned.length === 0){
+      const a = contract?.nft?.query?.owned?.all()
+      .then(res => {
+        if(res.length !== 0){
+          setSkeleton(false)
+          setMetadataOwned(res)
+          setNoNFT(false)
+          console.log("nft Count ", res.length)
+        }else{
+          console.log("nft Count -> ", res.length)
+          setNoNFT(true)
+          setSkeleton(false)
+        }
+      })
+      .catch(err => {
+        console.log("refetch")
+      })
+    }
+  }, [address, contract, noNFT, status, data, metadataOwned]);
+
 
   return (
-    <div>
-        {!address && !loading ? (
+    <HomepageSection>
+    <Container maxWidth="container.xl" minH="100vh">
+        {!address ? (
+          <Flex direction="column" justify="center" >
             <NoWallet />
-          ) : 
-          <HomepageSection topGradient>
-            <Flex direction="column" justify="center" height="100vh">
-                <MintCard />
-            </Flex>
-          </HomepageSection>
-          }
-    </div>
+          </Flex>
+          ) : isFetching || isLoading || skeleton ? (
+                <SimpleGrid columns={{ base: 1, sm : 1, md: 2, lg: 4 }} gap='20px'  mt={{sm : '80px', md : '150px', lg : '180px'}}>
+                  <NFTSkeleton />
+                  <NFTSkeleton />
+                  <NFTSkeleton />
+                  <NFTSkeleton />
+                </SimpleGrid>
+          ) : (
+            <SimpleGrid columns={{ base: 1, sm : 1, md: 2, lg: 4 }} gap='20px'  mt={{sm : '80px', md : '150px', lg : '180px'}}>
+              { noNFT && isFetched ? (
+                  <Text>No NFTs</Text>
+                ) : 
+                metadataOwned?.map((metadata, index) => ( 
+                  <Box key={index}>
+                    <NFT 
+                      name={metadata.metadata.name}
+                      image={metadata.metadata.image as string}
+                      description={metadata.metadata.description as string}
+                      owner={metadata.owner as string}
+                      id={metadata.metadata.id}
+                      from="dashboard"
+                    />
+                  </Box>
+                )
+            )}
+            </SimpleGrid>
+        )}
+    </Container>
+    </HomepageSection>
   )
 }
 
 Dashboard.getLayout = (page: ReactElement) => <Layout>{page}</Layout>;
+

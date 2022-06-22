@@ -95,9 +95,9 @@ import { useState } from 'react';
           <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
             <Logo color='var(--chakra-colors-chakra-body-text)' />
   
-            <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
+            {/* <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
               <DesktopNav />
-            </Flex>
+            </Flex> */}
           </Flex>
   
           <Stack
@@ -105,14 +105,9 @@ import { useState } from 'react';
             justify={'flex-end'}
             direction={'row'}
             spacing={6}>
-            <Button
-              as={'a'}
-              fontSize={'sm'}
-              fontWeight={400}
-              variant={'link'}
-              href={'#'}>
-              Sign In
-            </Button>
+            <Flex display={{ base: 'none', md: 'flex' }} >
+              <DesktopNav />
+            </Flex>
             <Button onClick={toggleColorMode}>
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
             </Button>
@@ -144,13 +139,12 @@ import { useState } from 'react';
   const DesktopNav = () => {
     const linkColor = useColorModeValue('gray.600', 'gray.200');
     const linkHoverColor = useColorModeValue('gray.800', 'white');
-    const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+    const popoverContentBgColor = useColorModeValue('white', 'gray.600');
   
     return (
-      <Stack direction={'row'} spacing={4}>
+      <Stack direction={'row'} spacing={4} >
         {NAV_ITEMS.map((navItem) => (
-          <Box key={navItem.label}>
-            <Popover trigger={'hover'} placement={'bottom-start'}>
+            <Popover key={navItem.label} trigger={'hover'} placement={'bottom-start'}>
               <PopoverTrigger>
                 <ChakraLink
                   p={2}
@@ -171,18 +165,15 @@ import { useState } from 'react';
                   border={0}
                   boxShadow={'xl'}
                   bg={popoverContentBgColor}
-                  p={4}
+                  p={2}
                   rounded={'xl'}
                   minW={'sm'}>
-                  <Stack>
                     {navItem.children.map((child) => (
                       <DesktopSubNav key={child.label} {...child} />
                     ))}
-                  </Stack>
                 </PopoverContent>
               )}
             </Popover>
-          </Box>
         ))}
       </Stack>
     );
@@ -295,11 +286,11 @@ import { useState } from 'react';
   const NAV_ITEMS: Array<NavItem> = [
     
     {
-      label: 'Section 1',
+      label: 'Section1',
       href: '#section1',
     },
     {
-      label: 'Section 2',
+      label: 'Section2',
       href: '#section2',
     },
     {

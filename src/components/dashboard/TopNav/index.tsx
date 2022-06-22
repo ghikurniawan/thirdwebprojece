@@ -30,9 +30,10 @@ import {
 } from '@chakra-ui/icons';
 import { Logo } from '@/components/logo';
 import {  useState } from 'react';
-import { useAddress, useNetworkMismatch, useActiveChainId , ChainId, useNetwork } from '@thirdweb-dev/react';
+import { useAddress, useNetworkMismatch, useActiveChainId , ChainId } from '@thirdweb-dev/react';
 import Connected from '@/components/button/Connected';
 import { SiDiscord, SiGithub, SiInstagram, SiTwitter } from 'react-icons/si';
+import NextLink from 'next/link';
 
 export default function TopNav() {
   const { isOpen, onToggle } = useDisclosure();
@@ -42,7 +43,7 @@ export default function TopNav() {
   const address = useAddress()
   const networkMisMatch = useNetworkMismatch()
   const activeChain = useActiveChainId()
-
+  const bgNav = useColorModeValue("#ffffff", "navy.800")
   useScrollPosition(
     ({ currPos }) => {
       if (currPos.y < -5) {
@@ -68,11 +69,11 @@ export default function TopNav() {
       zIndex="overlay"
       as="header"
       boxShadow={isScrolled ? "md" : undefined}
-      bg={isScrolled ? "blackAlpha.500" : "transparent"}
+      bg={isScrolled ? bgNav : "transparent"}
       backdropFilter="blur(10px)"
       borderBottom={1}
-        borderStyle={'solid'}
-        borderColor={useColorModeValue('gray.400', 'gray.600')}
+      borderStyle={'solid'}
+      borderColor={useColorModeValue('gray.400', 'gray.600')}
     >
       {networkMisMatch ? (
         <Box
@@ -123,22 +124,22 @@ export default function TopNav() {
             direction={'row'}
             spacing={6}>
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-            <ButtonGroup variant="ghost" >
-                  <ChakraLink href="https://twitter.com" isExternal>
-                      <Button iconSpacing={0} leftIcon={<SiTwitter fontSize="1rem" />} colorScheme='gray' variant='ghost' />
-                  </ChakraLink>
-                  <ChakraLink href="https://discord.gg/" isExternal>
-                      <Button iconSpacing={0} leftIcon={<SiDiscord fontSize="1rem" />} colorScheme='gray' variant='ghost' />
-                  </ChakraLink>
-                  <ChakraLink href="https://www.instagram.com" isExternal>
-                      <Button iconSpacing={0} leftIcon={<SiInstagram fontSize="1rem" />} colorScheme='gray' variant='ghost' />
-                  </ChakraLink>
-                  <ChakraLink href="https://github.com" isExternal>
-                      <Button iconSpacing={0} leftIcon={<SiGithub fontSize="1rem" />} colorScheme='gray' variant='ghost' />
-                  </ChakraLink>
-              </ButtonGroup>
+                <ButtonGroup variant="ghost">
+                    <ChakraLink href="https://twitter.com" isExternal>
+                        <Button aria-label="Twitter Link" iconSpacing={0} leftIcon={<SiTwitter fontSize="1rem" />} colorScheme='gray' variant='ghost' />
+                    </ChakraLink>
+                    <ChakraLink href="https://discord.gg/" isExternal>
+                        <Button aria-label="Discord Link" iconSpacing={0} leftIcon={<SiDiscord fontSize="1rem" />} colorScheme='gray' variant='ghost' />
+                    </ChakraLink>
+                    <ChakraLink href="https://www.instagram.com" isExternal>
+                        <Button aria-label="Instagram Link" iconSpacing={0} leftIcon={<SiInstagram fontSize="1rem" />} colorScheme='gray' variant='ghost' />
+                    </ChakraLink>
+                    <ChakraLink href="https://github.com" isExternal>
+                        <Button aria-label="Github Link" iconSpacing={0} leftIcon={<SiGithub fontSize="1rem" />} colorScheme='gray' variant='ghost' />
+                    </ChakraLink>
+                </ButtonGroup>
             </Flex>
-            <Button onClick={toggleColorMode} variant="ghost">
+            <Button aria-label='Toggle Darkmode' onClick={toggleColorMode} variant="ghost">
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
             </Button>
               {address ? (
@@ -154,10 +155,13 @@ export default function TopNav() {
       </Container>
       <Flex
         display={{ base: 'none', md: 'flex' }}
+        borderTop={1}
+        borderStyle={'solid'}
+        borderColor={useColorModeValue('gray.400', 'gray.600')}
       >
         <Container
           maxWidth='container.xl'
-          pb={4}
+          py={4}
         >
           <Center>
             <DesktopNav />
@@ -181,18 +185,20 @@ const DesktopNav = () => {
         <Box key={navItem.label}>
           <Popover trigger={'hover'} placement={'bottom-start'}>
             <PopoverTrigger>
-              <ChakraLink
-                p={2}
-                href={navItem.href ?? '#'}
-                fontSize={'sm'}
-                fontWeight={500}
-                color={linkColor}
-                _hover={{
-                  textDecoration: 'none',
-                  color: linkHoverColor,
-                }}>
-                {navItem.label}
-              </ChakraLink>
+                <ChakraLink
+                  as={'p'}
+                  p={2}
+                  fontSize={'sm'}
+                  fontWeight={500}
+                  color={linkColor}
+                  _hover={{
+                    textDecoration: 'none',
+                    color: linkHoverColor,
+                  }}>
+                  <NextLink href={navItem.href ?? '#'}>
+                  {navItem.label}
+                  </NextLink>
+                </ChakraLink>
             </PopoverTrigger>
 
             {navItem.children && (
@@ -213,6 +219,11 @@ const DesktopNav = () => {
           </Popover>
         </Box>
       ))}
+      <NextLink href="/dashboard/mint">
+          <Button size="md" variant="solid" bgColor="green.500" minW="100">
+            Mint
+          </Button>
+      </NextLink>
     </Stack>
   );
 };
@@ -225,7 +236,7 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
       display={'block'}
       p={2}
       rounded={'md'}
-      _hover={{ bg: useColorModeValue('pink.50', 'gray.900') }}>
+      _hover={{ bg: useColorModeValue('pink.200', 'gray.900') }}>
       <Stack direction={'row'} align={'center'}>
         <Box>
           <Text
@@ -324,24 +335,24 @@ interface NavItem {
 const NAV_ITEMS: Array<NavItem> = [
   
   {
-    label: 'Section 1',
-    href: '#section1',
+    label: 'Dashboard',
+    href: '/dashboard',
   },
   {
-    label: 'Section 2',
-    href: '#section2',
+    label: 'Gallery',
+    href: '/dashboard/gallery',
   },
   {
-    label: 'Dropdown1',
-    children: [
+    label: 'Listings',
+    children:[
       {
-        label: 'Link1',
-        subLabel: 'Description',
+        label: 'Browser',
+        subLabel: 'Browse all listings',
         href: '#',
       },
       {
-        label: 'Link2',
-        subLabel: 'Description',
+        label: 'Create',
+        subLabel: 'Create a new listing',
         href: '#',
       },
     ],
@@ -362,3 +373,5 @@ const NAV_ITEMS: Array<NavItem> = [
     ],
   },
 ];
+
+

@@ -8,15 +8,15 @@ import { useState } from "react";
 export default function useWeb3Contract(){
   
     const [loading, setLoading] = useState(false)
-    const [error, setError] = useState('')
+    const [error, setError] = useState<any>(null)
     const [isError, setIsError] = useState(false)
     const [mintSuccess, setMintSuccess] = useState(false)
-    const [data, setData] = useState(null)
+    const [data, setData] = useState<any>(null)
 
     const {contract, isLoading } = useContract(settings.contractAddress);
 
     const refreshState = () => {
-      setError('')
+      setError(null)
       setIsError(false)
       setData(null)
       setMintSuccess(false)
@@ -59,7 +59,7 @@ export default function useWeb3Contract(){
             let costBN = ethers.BigNumber.from(String(whitelisPriceSaleUnit * amount))
             const gas = await contract?.estimator.currentGasPriceInGwei()
             contract?.interceptor.overrideNextTransaction(() => ({
-              gasPrice: gas,
+              gasPrice: ethers.BigNumber.from(ethers.utils.parseUnits(gas as string , 9).toString()),
               value: ethers.utils.hexValue(costBN).toString(),
             }));
 
@@ -69,24 +69,21 @@ export default function useWeb3Contract(){
                       setMintSuccess(true)
                       setData(res.receipt)
                     }).catch(err => {
-                      const e = [err]
                       setLoading(false)
                       setIsError(true)
-                      setError(e[0].reason || err.message)
-                      setData(e[0].transaction)
-                      console.error("err -> ", e[0].reason || err.message)
+                      setError([err])
                     })
 
           }else{
             setLoading(false)
             setIsError(true)
-            setError("Max whitelist mint reached")
+            setError({message: "You have reached the max amount of minting"})
           }
 
       }else{
         setLoading(false)
         setIsError(true)
-        setError("You are not whitelisted")
+        setError({message: "you are not whitelisted"})
         console.log("merkeRootFromBlockChain -> ", merkeRootFromBlockChain)
         console.log("merkleRootLocal -> ", root)
       }
@@ -101,11 +98,11 @@ export default function useWeb3Contract(){
     const handlePublicMint = async ({address, publicPriceSaleUnit, amount} : handlePublicMintArgs) => {
       if(!address) return;
       setLoading(true)
-
+      console.log(address, publicPriceSaleUnit, amount)
       let costBN = ethers.BigNumber.from(String(publicPriceSaleUnit * amount))
       const gas = await contract?.estimator.currentGasPriceInGwei()
       contract?.interceptor.overrideNextTransaction(() => ({
-        gasPrice: gas,
+        gasPrice: ethers.BigNumber.from(ethers.utils.parseUnits(gas as string , 9).toString()),
         value: ethers.utils.hexValue(costBN).toString(),
       }));
 
@@ -113,10 +110,11 @@ export default function useWeb3Contract(){
       .then(res => {
         setLoading(false)
         setMintSuccess(true)
+        setData(res.receipt)
       }).catch(err => {
         setLoading(false)
         setIsError(true)
-        setError(err.message)
+        setError([err])
       })
     }
     

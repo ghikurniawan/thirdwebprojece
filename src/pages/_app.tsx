@@ -4,6 +4,8 @@ import { NextPage } from 'next';
 import { ReactElement, ReactNode } from 'react';
 import { DefaultSeo } from 'next-seo';
 
+import theme from '@/theme/theme';
+
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -29,7 +31,7 @@ function AwesomeApp({ Component, pageProps }: AppPropsWithLayout) {
             },
           ]}
         />
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
           {getLayout(<Component {...pageProps} />)}
       </ChakraProvider>
     </>

@@ -70,6 +70,12 @@ import { createRef } from 'react';
         switchNetwork,
       ] = useNetwork();
 
+
+      // useEffect(() => {
+      //   console.log("from useNetwork -> ",connectError, connected , connector?.name , connectors)
+        
+      // }, [connectError, connected, connector, connectors])
+
       const handleSwitchNetwork = async () => {
         // @ts-ignore - this is a valid chain id
         await switchNetwork(activeChain);
@@ -108,10 +114,7 @@ import { createRef } from 'react';
       }
       
 
-      useEffect(() => {
-        console.log("from useNetwork -> ",connectError, connected , connector?.name , connectors)
-        
-      }, [connectError, connected, connector, connectors])
+      
 
       useEffect(() => {
         if(balance) {

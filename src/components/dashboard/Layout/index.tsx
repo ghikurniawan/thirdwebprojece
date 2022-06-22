@@ -41,6 +41,9 @@ export default function Layout(props : LayoutProps) {
 return (
     <>
         <ThirdwebProvider
+            connectors={connector}
+            storage={new IpfsStorage(settings.ipfsGateway)}
+            autoConnect={true}
             desiredChainId={settings.chain_id}
             chainRpc={{ [ChainId[settings.chain_id]]: settings.rpcUrl}}
             dAppMeta={{
@@ -67,23 +70,23 @@ return (
 
         </ThirdwebProvider>
 
-        <Container zIndex="overlay" as="footer" maxW="container.page" w="100%" py={4} position="fixed" bottom="0" borderTop="1px" borderColor="gray.600">
+        <Container as="footer" maxW="container.page" w="100%" py={4} borderTop="1px" borderColor="gray.600">
             <Stack direction="row" spacing="4" align="center" justify="center">
                 <Text alignSelf="center">
                     {settings.appName} &copy; {new Date().getFullYear()}
                 </Text>
                 <ButtonGroup variant="ghost">
                     <ChakraLink href="https://twitter.com" isExternal>
-                        <Button iconSpacing={0} leftIcon={<SiTwitter fontSize="1rem" />} colorScheme='gray' variant='ghost' />
+                        <Button aria-label="Twitter Link" iconSpacing={0} leftIcon={<SiTwitter fontSize="1rem" />} colorScheme='gray' variant='ghost' />
                     </ChakraLink>
                     <ChakraLink href="https://discord.gg/" isExternal>
-                        <Button iconSpacing={0} leftIcon={<SiDiscord fontSize="1rem" />} colorScheme='gray' variant='ghost' />
+                        <Button aria-label="Discord Link" iconSpacing={0} leftIcon={<SiDiscord fontSize="1rem" />} colorScheme='gray' variant='ghost' />
                     </ChakraLink>
                     <ChakraLink href="https://www.instagram.com" isExternal>
-                        <Button iconSpacing={0} leftIcon={<SiInstagram fontSize="1rem" />} colorScheme='gray' variant='ghost' />
+                        <Button aria-label="Instagram Link" iconSpacing={0} leftIcon={<SiInstagram fontSize="1rem" />} colorScheme='gray' variant='ghost' />
                     </ChakraLink>
                     <ChakraLink href="https://github.com" isExternal>
-                        <Button iconSpacing={0} leftIcon={<SiGithub fontSize="1rem" />} colorScheme='gray' variant='ghost' />
+                        <Button aria-label="Github Link" iconSpacing={0} leftIcon={<SiGithub fontSize="1rem" />} colorScheme='gray' variant='ghost' />
                     </ChakraLink>
                 </ButtonGroup>
             </Stack>
