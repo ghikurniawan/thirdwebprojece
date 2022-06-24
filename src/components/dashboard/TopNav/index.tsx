@@ -37,11 +37,12 @@ import {
   ChevronRightIcon,
 } from '@chakra-ui/icons';
 import { Logo } from '@/components/logo';
-import {  useState } from 'react';
+import {  useEffect, useState } from 'react';
 import { useAddress, useNetworkMismatch, useActiveChainId , ChainId } from '@thirdweb-dev/react';
 import Connected from '@/components/button/Connected';
 import { SiDiscord, SiGithub, SiInstagram, SiTwitter } from 'react-icons/si';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 
 export default function TopNav() {
   const { isOpen, onToggle } = useDisclosure();
@@ -186,11 +187,37 @@ export default function TopNav() {
 }
 
 const DesktopNav = () => {
+  const router = useRouter();
+  const [tabIndex , setTabIndex] = useState(0)
   let menuBg = useColorModeValue("white", "navy.800");
   const shadow = useColorModeValue(
     "14px 17px 40px 4px rgba(112, 144, 176, 0.18)",
     "14px 17px 40px 4px rgba(112, 144, 176, 0.06)"
   );
+
+  const path = router.pathname
+useEffect(() => {
+  function getTabIndex() : number {
+    switch(path){
+      case '/dashboard':
+        setTabIndex(0)
+        return 0
+        case '/dashboard/gallery':
+        setTabIndex(1)
+        return 1
+        case '/dashboard/listings':
+        setTabIndex(2)
+        return 2
+        case '/dashboard/listings/create':
+        setTabIndex(2)
+        return 2
+
+        default:
+          return 0
+    }
+  }
+  getTabIndex()
+}, [path])
 
   return (
     <Flex
@@ -200,7 +227,7 @@ const DesktopNav = () => {
       borderWidth={0}
       overflowX="auto"
     >
-      <Tabs defaultIndex={0} borderBottomColor="transparent">
+      <Tabs defaultIndex={tabIndex} borderBottomColor="transparent">
         <TabList>
         {NAV_ITEMS.map((navItem) => (
           <Popover key={navItem.label} trigger={'click'} placement={'bottom-start'}>

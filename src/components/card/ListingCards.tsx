@@ -1,9 +1,11 @@
 // Chakra imports
+import MarketplaceProvider, { marketplaceContext } from "@/contexts/MarketplaceProvider";
 import { Ethereum } from "@/utils/Logo";
 import { CloseIcon, ExternalLinkIcon, StarIcon } from "@chakra-ui/icons";
 import {
     Box,
     Button,
+    Center,
     Collapse,
     Flex,
     Heading,
@@ -16,6 +18,7 @@ import {
     ModalHeader,
     ModalOverlay,
     SimpleGrid,
+    Spinner,
     Tag,
     Text,
     useColorModeValue,
@@ -27,6 +30,7 @@ import { MediaRenderer, useAddress } from "@thirdweb-dev/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useContext } from "react";
   // Custom components
   import Card from "./Card";
 
@@ -36,6 +40,8 @@ import { useRouter } from "next/router";
   }
   
   export default function ListingCards(props : INFT) {
+    const {buyoutListing, buyoutLoading} = useContext(marketplaceContext)
+    const address = useAddress();
     const router = useRouter();
     const { data , from } = props;
     const textColor = useColorModeValue("navy.700", "white");
@@ -45,10 +51,29 @@ import { useRouter } from "next/router";
       router.push(`/${from}`);
     }
 
+    const handleBuyout = (id: string) => {
+      buyoutListing(id)
+    }
+
+    const handleLoadingClose = () => {
+
+    }
+
     return (
       <>
       {router.query.id && (
-        <NFTDetail id={router.query.id} close={handleModalClose} metadata={data}/>
+        <NFTDetail id={router.query.id} close={handleModalClose} metadata={data} buyoutListing={handleBuyout}/>
+      )}
+      {buyoutLoading && (
+        <Modal isOpen onClose={handleLoadingClose} isCentered>
+          <ModalOverlay />
+          <ModalContent bg={'transparent'} boxShadow='none'>
+            <Center>
+              <Spinner size={'xl'}/>
+            </Center>
+          </ModalContent>
+        </Modal>
+
       )}
       {data.map((item: any , index) => (
         <Box key={item.asset.id}>
@@ -120,6 +145,7 @@ import { useRouter } from "next/router";
                         <Icon as={Ethereum} /> {item.buyoutCurrencyValuePerToken.displayValue + " " + item.buyoutCurrencyValuePerToken.symbol}
                     </Tag>
                   <Button
+                    isDisabled={address === item.sellerAddress}
                     variant='outline'
                     color={textColor}
                     fontSize='sm'
@@ -127,18 +153,9 @@ import { useRouter } from "next/router";
                     borderRadius='lg'
                     px='24px'
                     py='5px'
-                    onClick={() => {
-                      navigator.clipboard.writeText(item.sellerAddress || "")
-                      toast({
-                          title: "Copied",
-                          description: "Owner address copied to clipboard",
-                          status: "success",
-                          duration: 9000,
-                          isClosable: true,
-                      })
-                    }}
+                    onClick={() => handleBuyout(item.id)}
                     >
-                    {item.sellerAddress?.slice(0,5) + '...' + item.sellerAddress?.slice(-3)}
+                      Purchase
                   </Button>
               </Flex>
             </Flex>
@@ -153,11 +170,16 @@ import { useRouter } from "next/router";
 
 
   const NFTDetail = (props : any) => {
+    const {buyoutListing, buyoutLoading} = useContext(marketplaceContext)
     const address = useAddress()
     const {id, close, metadata} = props;
     const textColor = useColorModeValue("navy.700", "white");
     const toast = useToast();
-    const { asset : {attributes, description, image, name, edition }, sellerAddress : owner, buyoutCurrencyValuePerToken } = metadata[id];
+    const { asset : {attributes, description, image, name, edition }, sellerAddress : owner, buyoutCurrencyValuePerToken , id : marketId } = metadata[id];
+    
+    const handleBuyout = (id : string) => {
+      buyoutListing(id)
+    }
     return (
       <>
       <Modal size={'6xl'} isOpen onClose={close} isCentered motionPreset='slideInBottom'>
@@ -254,17 +276,22 @@ import { useRouter } from "next/router";
                         <Icon as={Ethereum} /> {buyoutCurrencyValuePerToken.displayValue + " " + buyoutCurrencyValuePerToken.symbol}
                     </Tag>
                         <Button
-                        disabled={!address}
-                        variant='outline'
-                        color={textColor}
-                        fontSize='sm'
-                        fontWeight='500'
-                        borderRadius='lg'
-                        px='24px'
-                        py='5px'
-                        rightIcon={<ExternalLinkIcon />}
-                        >
-                          Buy 
+                          disabled={!address}
+                          variant='outline'
+                          color={textColor}
+                          fontSize='sm'
+                          fontWeight='500'
+                          borderRadius='lg'
+                          px='24px'
+                          py='5px'
+                          rightIcon={<ExternalLinkIcon />}
+                          onClick={() => {
+                            handleBuyout(marketId)
+                            close
+                            
+                          }}
+                          >
+                            Buy 
                         </Button>
                       </Flex>
                       <Flex justify={'space-between'} mt={'10px'}>
