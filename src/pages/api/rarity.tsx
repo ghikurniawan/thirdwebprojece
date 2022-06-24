@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 export default (req: NextApiRequest, res: NextApiResponse) => {
 
     // Query params
-    const { gatewayID } = req.query;
+    const { contract_address } = req.query;
 
     if (req.method !== 'GET') {
         res.status(405).json({ message: 'Method not allowed', data : [] });
@@ -15,4 +15,5 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).json({ message: 'Invalid gateway ID' });
         return;
     }
+
 }

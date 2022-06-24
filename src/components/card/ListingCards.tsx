@@ -1,5 +1,6 @@
 // Chakra imports
-import { StarIcon } from "@chakra-ui/icons";
+import { Ethereum } from "@/utils/Logo";
+import { CloseIcon, ExternalLinkIcon, StarIcon } from "@chakra-ui/icons";
 import {
     Box,
     Button,
@@ -15,13 +16,14 @@ import {
     ModalHeader,
     ModalOverlay,
     SimpleGrid,
+    Tag,
     Text,
     useColorModeValue,
     useDisclosure,
     useStyleConfig,
     useToast,
   } from "@chakra-ui/react";
-import { MediaRenderer } from "@thirdweb-dev/react";
+import { MediaRenderer, useAddress } from "@thirdweb-dev/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -29,13 +31,13 @@ import { useRouter } from "next/router";
   import Card from "./Card";
 
   interface INFT {
-    metadata: Array<any>;
+    data: Array<any>;
     from: string;
   }
   
-  export default function NFT(props : INFT) {
+  export default function ListingCards(props : INFT) {
     const router = useRouter();
-    const { metadata, from } = props;
+    const { data , from } = props;
     const textColor = useColorModeValue("navy.700", "white");
     const toast = useToast();
 
@@ -46,10 +48,10 @@ import { useRouter } from "next/router";
     return (
       <>
       {router.query.id && (
-        <NFTDetail id={router.query.id} close={handleModalClose} metadata={metadata}/>
+        <NFTDetail id={router.query.id} close={handleModalClose} metadata={data}/>
       )}
-      {metadata.map((item: any , index) => (
-        <Box key={item.metadata.id}>
+      {data.map((item: any , index) => (
+        <Box key={item.asset.id}>
         <LinkBox >
         <Card p='20px'>
           <Flex direction={{ base: "column" }} justify='center'>
@@ -62,9 +64,10 @@ import { useRouter } from "next/router";
                     width={'100%'}
                     height={'100%'}
                     layout="responsive"
-                    alt={item.metadata.name}
-                    src={item.metadata.image}
+                    alt={item.asset.name}
+                    src={item.asset.image}
                     style={{borderRadius: '20px'}}
+                    priority
                   />
             </Box>
             <Flex flexDirection='column' justify='space-between' h='100%'>
@@ -92,7 +95,7 @@ import { useRouter } from "next/router";
                     mb='5px'
                     fontWeight='bold'
                     me='14px'>
-                    {item.metadata.name}
+                    {item.asset.name}
                   </Text>
                   <Link passHref href={`/${from}?id=${index}`} as={`/${from}/${index}`}>
                   <LinkOverlay >
@@ -103,16 +106,19 @@ import { useRouter } from "next/router";
                     }}
                     fontWeight='400'
                     me='14px'>
-                    {item.metadata.description}
+                    {item.asset.description}
                   </Text>
                   </LinkOverlay>
                   </Link>
                 </Flex>
               </Flex>
               <Flex
-                justify='end'
+                justify='space-between'
                 direction='row'
                 mt='25px'>
+                    <Tag size={'md'} variant={'solid'}>
+                        <Icon as={Ethereum} /> {item.buyoutCurrencyValuePerToken.displayValue + " " + item.buyoutCurrencyValuePerToken.symbol}
+                    </Tag>
                   <Button
                     variant='outline'
                     color={textColor}
@@ -122,7 +128,7 @@ import { useRouter } from "next/router";
                     px='24px'
                     py='5px'
                     onClick={() => {
-                      navigator.clipboard.writeText(item.owner || "")
+                      navigator.clipboard.writeText(item.sellerAddress || "")
                       toast({
                           title: "Copied",
                           description: "Owner address copied to clipboard",
@@ -132,7 +138,7 @@ import { useRouter } from "next/router";
                       })
                     }}
                     >
-                    {item.owner?.slice(0,5) + '...' + item.owner?.slice(-3)}
+                    {item.sellerAddress?.slice(0,5) + '...' + item.sellerAddress?.slice(-3)}
                   </Button>
               </Flex>
             </Flex>
@@ -147,10 +153,11 @@ import { useRouter } from "next/router";
 
 
   const NFTDetail = (props : any) => {
+    const address = useAddress()
     const {id, close, metadata} = props;
     const textColor = useColorModeValue("navy.700", "white");
     const toast = useToast();
-    const { metadata : {name, description, image, id: metadataId, attributes, edition}, owner } = metadata[id];
+    const { asset : {attributes, description, image, name, edition }, sellerAddress : owner, buyoutCurrencyValuePerToken } = metadata[id];
     return (
       <>
       <Modal size={'6xl'} isOpen onClose={close} isCentered motionPreset='slideInBottom'>
@@ -158,7 +165,7 @@ import { useRouter } from "next/router";
         bg='blackAlpha.100'
         backdropFilter='blur(10px)'
         />
-        <ModalContent css={{background :'transparent'}} margin='10'>
+        <ModalContent css={{background :'transparent'}} margin="10">
           <Card p='20px'>
             <SimpleGrid columns={[1, 1, 1, 1 ,2]} spacing={'4'}>
                   <Image
@@ -243,6 +250,24 @@ import { useRouter } from "next/router";
                         ))}
                       </SimpleGrid>
                       <Flex justify={'space-between'} mt={'10px'}>
+                    <Tag size={'md'} variant={'solid'}>
+                        <Icon as={Ethereum} /> {buyoutCurrencyValuePerToken.displayValue + " " + buyoutCurrencyValuePerToken.symbol}
+                    </Tag>
+                        <Button
+                        disabled={!address}
+                        variant='outline'
+                        color={textColor}
+                        fontSize='sm'
+                        fontWeight='500'
+                        borderRadius='lg'
+                        px='24px'
+                        py='5px'
+                        rightIcon={<ExternalLinkIcon />}
+                        >
+                          Buy 
+                        </Button>
+                      </Flex>
+                      <Flex justify={'space-between'} mt={'10px'}>
                         <Button
                         variant='outline'
                         color={textColor}
@@ -252,6 +277,7 @@ import { useRouter } from "next/router";
                         px='24px'
                         py='5px'
                         onClick={close}
+                        leftIcon={<CloseIcon />}
                         >
                           Close
                         </Button>

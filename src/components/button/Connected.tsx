@@ -26,6 +26,7 @@ import {
     ModalBody,
     FormControl,
     useDisclosure,
+    FormHelperText,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { RiShutDownLine } from 'react-icons/ri';
@@ -253,8 +254,9 @@ import { createRef } from 'react';
             <ModalCloseButton />
             <ModalBody pb={6}>
               <FormControl>
-                <FormLabel>Safe Address</FormLabel>
-                <Input required type="text" ref={safeRef} placeholder='net:0x000000000000000000000000000000000000' onChange={(e) => setSafeAddress(e.target.value as any)} onPaste={(e) => handlePaste(e)}/>
+                <FormLabel htmlFor='safeAddress'>Safe Address</FormLabel>
+                <Input id='safeAddress' required type="text" ref={safeRef} placeholder='net:0x000000000000000000000000000000000000' onChange={(e) => setSafeAddress(e.target.value as any)} onPaste={(e) => handlePaste(e)}/>
+                <FormHelperText>We`&apos;`ll never share your email.</FormHelperText>
               </FormControl>
             </ModalBody>
   

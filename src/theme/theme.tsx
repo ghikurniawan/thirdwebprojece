@@ -10,6 +10,7 @@ import { switchStyles } from "./components/switch";
 import { linkStyles } from "./components/link";
 import { breakpoints } from "./foundations/breakpoints";
 import { globalStyles } from "./styles";
+import { ModalComponent } from "./additions/modal/modal";
 const theme = extendTheme(
   { breakpoints }, // Breakpoints
   globalStyles,
@@ -21,7 +22,8 @@ const theme = extendTheme(
   inputStyles, // input styles
   textareaStyles, // textarea styles
   switchStyles, // switch styles
-  CardComponent // card component
+  CardComponent, // card component
+  ModalComponent // modal component
 );
 
 export default theme;

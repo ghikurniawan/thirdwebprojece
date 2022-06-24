@@ -1,30 +1,46 @@
 // Chakra imports
-import { StarIcon } from "@chakra-ui/icons";
+import { Ethereum } from "@/utils/Logo";
+import { settings } from "@/utils/settings";
+import { CheckIcon, StarIcon } from "@chakra-ui/icons";
 import {
     Box,
     Button,
     Collapse,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerOverlay,
     Flex,
-    Heading,
+    FormControl,
+    FormErrorMessage,
+    FormHelperText,
+    FormLabel,
     Icon,
+    Input,
+    InputGroup,
+    InputLeftElement,
+    InputRightElement,
     LinkBox,
     LinkOverlay,
     Modal,
-    ModalCloseButton,
     ModalContent,
-    ModalHeader,
     ModalOverlay,
+    Select,
     SimpleGrid,
+    Stack,
     Text,
     useColorModeValue,
-    useDisclosure,
-    useStyleConfig,
     useToast,
   } from "@chakra-ui/react";
-import { MediaRenderer } from "@thirdweb-dev/react";
+import { useMarketplace } from "@thirdweb-dev/react";
+import { NATIVE_TOKEN_ADDRESS } from "@thirdweb-dev/sdk";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
   // Custom components
   import Card from "./Card";
 
@@ -33,7 +49,7 @@ import { useRouter } from "next/router";
     from: string;
   }
   
-  export default function NFT(props : INFT) {
+  export default function SellNftCard(props : INFT) {
     const router = useRouter();
     const { metadata, from } = props;
     const textColor = useColorModeValue("navy.700", "white");
@@ -46,7 +62,7 @@ import { useRouter } from "next/router";
     return (
       <>
       {router.query.id && (
-        <NFTDetail id={router.query.id} close={handleModalClose} metadata={metadata}/>
+        <SellDrawer id={router.query.id} close={handleModalClose} metadata={metadata}/>
       )}
       {metadata.map((item: any , index) => (
         <Box key={item.metadata.id}>
@@ -284,4 +300,171 @@ import { useRouter } from "next/router";
       </Modal>
       </>
     );  
+  }
+
+
+
+
+function SellDrawer(props : any) {
+    const toast = useToast();
+    const marketplace = useMarketplace(settings.marketplace)
+    const {id, close, metadata} = props;
+    const { metadata : {name, description, image, id: metadataId, attributes, edition}, owner } = metadata[id];
+    const textColor = useColorModeValue("navy.700", "white");
+
+    const [inputType, setInputType] = useState('direct')
+    const [inputPrice, setInputPrice] = useState('')
+    const [loading, setLoading] = useState(false)
+    
+    const priceColor = useColorModeValue("gray.700", "white");
+    
+    const handleChangePrice = (event : any) => setInputPrice(event.target.value)
+
+    const handleInputListingType= (e : any) => {
+        setInputType(e.target.value)
+    }
+
+    const isPriceError = inputPrice === ''
+
+    const listing = {
+        // address of the NFT contract the asset you want to list is on
+        assetContractAddress: settings.contractAddress,
+        // token ID of the asset you want to list
+        tokenId: metadataId?.toString(),
+       // when should the listing open up for offers
+        startTimestamp: new Date(),
+        // how long the listing will be open for
+        listingDurationInSeconds: 86400 * 7,
+        // how many of the asset you want to list
+        quantity: 1,
+        // address of the currency contract that will be used to pay for the listing
+        currencyContractAddress: NATIVE_TOKEN_ADDRESS,
+        // how much the asset will be sold for
+        buyoutPricePerToken: inputPrice,
+      }
+
+    const handleTxListing = async () => {
+        setLoading(true)
+        try{
+            const tx = await marketplace?.direct.createListing(listing);
+            const receipt = tx?.receipt; // the transaction receipt
+            const listingId = tx?.id; // the id of the newly created listing
+            if(listingId){
+                toast({
+                    title: "Listing created",
+                    description: "Listing created successfully",
+                    status: "success",
+                    duration: 9000,
+                    isClosable: true,
+                })
+                close()
+            }
+            setLoading(false)
+            console.log(receipt)
+            console.log(listingId)
+        }catch(e){
+            setLoading(false)
+            console.log(e)
+        }
+      
+      // And on the buyers side:
+      // Quantity of the asset you want to buy
+    //   const quantityDesired = 1;
+    //   await marketplace.direct.buyoutListing(listingId, quantityDesired);
+    }
+
+
+    return (
+      <>
+        <Drawer
+          isOpen
+          placement='right'
+          size={'md'}
+          onClose={close}
+        >
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader>Create Listings</DrawerHeader>
+  
+            <DrawerBody>
+            <Flex direction={'column'} justify={'space-around'} gap={4}>
+                <Box maxW={'300'} >
+                  <Image
+                    width={'100%'}
+                    height={'100%'}
+                    layout="responsive"
+                    alt={name}
+                    src={image}
+                    style={{borderRadius: '20px'}}
+                  />
+                </Box>
+                <Flex direction='row' justify={'space-between'}>
+                        <Box>
+                            <Text
+                                color={textColor}
+                                fontSize={'sm'}
+                                mb='5px'
+                                fontWeight='bold'
+                                me='14px'>
+                                {name}
+                            </Text>
+                            <Text
+                            color='secondaryGray.600'
+                            fontSize={{
+                                base: "sm",
+                            }}
+                            fontWeight='400'
+                            me='14px'>
+                            {description}
+                            </Text>
+                        </Box>
+                      <Text
+                        color={textColor}
+                        fontSize={'xx-large'}
+                        mb='5px'
+                        fontWeight='bold'
+                        me='14px'>
+                        # {edition}
+                      </Text>
+                </Flex>
+                <Stack spacing={6}>
+                    <FormControl isRequired>
+                        <FormLabel htmlFor='type'>Listing Type</FormLabel>
+                        <Select
+                        id='type'
+                        value={'direct'} 
+                            onChange = {handleInputListingType}
+                        >
+                            <option value={'direct'}>Direct</option>
+                        </Select>
+                        <FormHelperText>
+                            Please select a listing type
+                        </FormHelperText>
+                    </FormControl>
+                    <InputGroup>
+                        <InputLeftElement
+                            color='gray.300'
+                            pointerEvents='none'
+                            fontSize='1.2em'
+                            // eslint-disable-next-line react/no-children-prop
+                            children={<Ethereum />}
+                        />
+                        <Input type={'number'} placeholder='Enter price' color={priceColor} onChange={handleChangePrice}/>
+                        {/* eslint-disable-next-line react/no-children-prop */}
+                        <InputRightElement children={ !isPriceError ? <CheckIcon color='green.500' /> : null} />
+                    </InputGroup>
+                </Stack>
+            </Flex>
+            </DrawerBody>
+            <DrawerFooter justifyContent={'space-between'}>
+              <Button variant='outline' mr={3} onClick={close}>
+                Cancel
+              </Button>
+              <Button isLoading={loading} isDisabled={!inputPrice || !inputType} colorScheme='blue' width={'sm'} onClick={handleTxListing}>Create Listing</Button>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      </>
+    )
   }

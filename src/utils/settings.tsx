@@ -12,4 +12,5 @@ export const settings = {
     appDescription : "This is an example awesome dapp",
     logoUrl : "/speedsnail_icon.svg",
     websiteUrl : "https://nitrous-oxide-snail.com",
+    marketplace : "0x1998896feCf91c55EA88F71728E5A24DD48E6879"
 }

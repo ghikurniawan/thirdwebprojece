@@ -1,8 +1,10 @@
 import { Button, ButtonGroup, Container, Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
-import { ChainId, ThirdwebProvider, IpfsStorage} from "@thirdweb-dev/react";
+import { ChainId, ThirdwebProvider, IpfsStorage, useContract} from "@thirdweb-dev/react";
 import { SiDiscord, SiGithub, SiInstagram, SiTwitter } from "react-icons/si";
 import TopNav from "@/components/dashboard/TopNav";
 import { settings } from '@/utils/settings'
+import NftProviders from "../NftProviders";
+import MarketplaceProvider from "@/contexts/MarketplaceProvider";
 
 type LayoutProps = {
     children: React.ReactNode; // 👈️ type children
@@ -65,8 +67,12 @@ return (
             // @ts-ignore
             walletConnectors={connector}
         >
-            <TopNav/>
-            {props.children}
+            <NftProviders>
+                <MarketplaceProvider>
+                    <TopNav/>
+                    {props.children}
+                </MarketplaceProvider>
+            </NftProviders>
 
         </ThirdwebProvider>
 

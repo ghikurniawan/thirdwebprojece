@@ -18,9 +18,17 @@ import {
   Container,
   ButtonGroup,
   Center,
+  Tabs,
+  TabList,
+  Tab,
+  Spacer,
+  HStack,
+  InputGroup,
+  InputLeftElement,
+  Input,
 } from '@chakra-ui/react';
 
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { MoonIcon, Search2Icon, SunIcon } from '@chakra-ui/icons';
 import { useScrollPosition } from "@n8tb1t/use-scroll-position";
 import {
   HamburgerIcon,
@@ -44,6 +52,7 @@ export default function TopNav() {
   const networkMisMatch = useNetworkMismatch()
   const activeChain = useActiveChainId()
   const bgNav = useColorModeValue("#ffffff", "navy.800")
+
   useScrollPosition(
     ({ currPos }) => {
       if (currPos.y < -5) {
@@ -79,7 +88,7 @@ export default function TopNav() {
         <Box
         background="red" 
         zIndex="overlay">
-          <Center>
+              <Container maxW={'container.lg'}>
             {/* @ts-ignore ts-message: Unreachable code error */}
             <marquee width="100%" direction="right" >
               <Text fontSize="large" color="white">
@@ -87,7 +96,7 @@ export default function TopNav() {
               </Text>
             {/* @ts-ignore ts-message: Unreachable code error */}
             </marquee>
-          </Center>
+              </Container>
         </Box>
       ) : null}
       <Container
@@ -116,7 +125,11 @@ export default function TopNav() {
           />
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          <Logo color='var(--chakra-colors-chakra-body-text)' />
+          <NextLink href="/" passHref>
+            <ChakraLink>
+            <Logo color='var(--chakra-colors-chakra-body-text)' />
+            </ChakraLink>
+          </NextLink>
         </Flex>
           <Stack
             flex={{ base: 1, md: 0 }}
@@ -163,9 +176,7 @@ export default function TopNav() {
           maxWidth='container.xl'
           py={4}
         >
-          <Center>
-            <DesktopNav />
-          </Center>
+           <DesktopNav />
         </Container>
       </Flex>
     </Box>
@@ -175,40 +186,52 @@ export default function TopNav() {
 }
 
 const DesktopNav = () => {
-  const linkColor = useColorModeValue('gray.600', 'gray.200');
-  const linkHoverColor = useColorModeValue('gray.800', 'white');
-  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+  let menuBg = useColorModeValue("white", "navy.800");
+  const shadow = useColorModeValue(
+    "14px 17px 40px 4px rgba(112, 144, 176, 0.18)",
+    "14px 17px 40px 4px rgba(112, 144, 176, 0.06)"
+  );
 
   return (
-    <Stack direction={'row'} spacing={4}>
-      {NAV_ITEMS.map((navItem) => (
-        <Box key={navItem.label}>
-          <Popover trigger={'hover'} placement={'bottom-start'}>
-            <PopoverTrigger>
-                <ChakraLink
-                  as={'p'}
-                  p={2}
-                  fontSize={'sm'}
-                  fontWeight={500}
-                  color={linkColor}
-                  _hover={{
-                    textDecoration: 'none',
-                    color: linkHoverColor,
-                  }}>
-                  <NextLink href={navItem.href ?? '#'}>
-                  {navItem.label}
-                  </NextLink>
-                </ChakraLink>
-            </PopoverTrigger>
+    <Flex
+      alignItems="center"
+      justifyContent="space-between"
+      mx={2}
+      borderWidth={0}
+      overflowX="auto"
+    >
+      <Tabs defaultIndex={0} borderBottomColor="transparent">
+        <TabList>
+        {NAV_ITEMS.map((navItem) => (
+          <Popover key={navItem.label} trigger={'click'} placement={'bottom-start'}>
+            <NextLink href={navItem.href ?? '#'} passHref>
+              <a>
+                <PopoverTrigger>
+                    <Tab
+                      py={4}
+                      m={0}
+                      _focus={{
+                        boxShadow: "none",
+                      }}
+                    >
+                    {navItem.label}
+                  </Tab>
+                </PopoverTrigger>
+              </a>
+            </NextLink>
 
             {navItem.children && (
               <PopoverContent
-                border={0}
-                boxShadow={'xl'}
-                bg={popoverContentBgColor}
-                p={4}
-                rounded={'xl'}
-                minW={'sm'}>
+                boxShadow={shadow}
+                p='20px'
+                me={{ base: "30px", md: "unset" }}
+                borderRadius='20px'
+                bg={menuBg}
+                border='none'
+                mt='22px'
+                minW={{ base: "unset" }}
+                maxW={{ base: "360px", md: "unset" }}
+              >
                 <Stack>
                   {navItem.children.map((child) => (
                     <DesktopSubNav key={child.label} {...child} />
@@ -216,27 +239,44 @@ const DesktopNav = () => {
                 </Stack>
               </PopoverContent>
             )}
+
           </Popover>
-        </Box>
-      ))}
-      <NextLink href="/dashboard/mint">
-          <Button size="md" variant="solid" bgColor="green.500" minW="100">
+        ))}
+        </TabList>
+      </Tabs>
+        <Spacer />
+        <HStack spacing={3} alignItems="center">
+          <InputGroup
+            display={{
+              base: "none",
+              lg: "block",
+            }}
+            ml="auto"
+          >
+            <InputLeftElement pointerEvents="none">
+              <Search2Icon />
+            </InputLeftElement>
+            <Input type="tel" placeholder="Search..." />
+          </InputGroup>
+          <NextLink href="/dashboard/mint">
+          <Button size="md" variant="action" minW="100">
             Mint
           </Button>
       </NextLink>
-    </Stack>
+</HStack>
+    </Flex>
   );
 };
 
 const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
   return (
+    <NextLink href={href as any} passHref>
     <ChakraLink
-      href={href}
       role={'group'}
       display={'block'}
       p={2}
       rounded={'md'}
-      _hover={{ bg: useColorModeValue('pink.200', 'gray.900') }}>
+      _hover={{ bg: useColorModeValue('pink.200', 'navy.900') }}>
       <Stack direction={'row'} align={'center'}>
         <Box>
           <Text
@@ -259,13 +299,13 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
         </Flex>
       </Stack>
     </ChakraLink>
+    </NextLink>
   );
 };
 
 const MobileNav = () => {
   return (
     <Stack
-      bg={useColorModeValue('white', 'gray.800')}
       p={4}
       display={{ md: 'none' }}>
       {NAV_ITEMS.map((navItem) => (
@@ -333,7 +373,6 @@ interface NavItem {
 }
 
 const NAV_ITEMS: Array<NavItem> = [
-  
   {
     label: 'Dashboard',
     href: '/dashboard',
@@ -348,30 +387,15 @@ const NAV_ITEMS: Array<NavItem> = [
       {
         label: 'Browser',
         subLabel: 'Browse all listings',
-        href: '#',
+        href: '/dashboard/listings',
       },
       {
         label: 'Create',
         subLabel: 'Create a new listing',
-        href: '#',
+        href: '/dashboard/listings/create',
       },
     ],
-  },
-  {
-    label: 'Dropdown2',
-    children: [
-      {
-        label: 'Link1',
-        subLabel: 'Description',
-        href: '#',
-      },
-      {
-        label: 'Link2',
-        subLabel: 'Description',
-        href: '#',
-      },
-    ],
-  },
+  }
 ];
 
 

@@ -3,8 +3,31 @@ import { useRouter } from "next/router";
 import { ReactElement, useEffect } from "react";
 import Layout from "@/components/dashboard/Layout";
 
-export default function Wallet() {
-    const connectWithMetamask = useMetamask();
+// Chakra imports
+import {
+  Box,
+  Button,
+  Flex,
+  LinkBox,
+  LinkOverlay,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useColorModeValue,
+  useStyleConfig,
+  useToast,
+} from "@chakra-ui/react";
+import { MediaRenderer } from "@thirdweb-dev/react";
+import Link from "next/link";
+
+
+
+export default function Detail() {
     const disconnectWallet = useDisconnect();
     const router = useRouter();
     const address = useAddress();
@@ -14,16 +37,10 @@ export default function Wallet() {
       }, [address]);
   return (
     <div>
-        {!address ? (
-           null
-        ) : (
-            <>
-              <button onClick={disconnectWallet}>Disconnect Wallet</button>
-              <p>Your address: {address}</p>
-            </>
-        )}
+        
     </div>
   )
 }
 
-Wallet.getLayout = (page: ReactElement) => <Layout>{page}</Layout>;
+Detail.getLayout = (page: ReactElement) => <Layout>{page}</Layout>;
+
