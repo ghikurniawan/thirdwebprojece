@@ -1487,15 +1487,15 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.1.3.tgz#6801033be7ff87a6b7cadaf5b337c9f366a3c4b0"
   integrity sha512-WiBSI6JBIhC6LRIsB2Kwh8DsGTlbBU+mLRxJmAe3LjHTdkDpwIbEOZgoXBbZilk/vlfjK8i6nKRAvIRn1XaIMw==
 
-"@thirdweb-dev/contracts@2.3.14":
-  version "2.3.14"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/contracts/-/contracts-2.3.14.tgz#46cb582b5593a4f2fd49d953894729aa6ec42f35"
-  integrity sha512-aQ7NGvU+1JDLh1Ha13m3DQpqfhmHzJUcbOOS93I0nKJOLKNUaQL2oQpg+3GBpMzZWIsScDztlfqwJ3wltaNYgQ==
+"@thirdweb-dev/contracts@2.3.15-0":
+  version "2.3.15-0"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/contracts/-/contracts-2.3.15-0.tgz#9ea4aa8500b213356acc1772c18222c8085087c0"
+  integrity sha512-hm6qK5GSp776ctXV3NeA6jvHHfkolJjTLXQ/ed9gZVBLVD5Bl1ofLRZ30wG3lf8eMMxFoJCEqOsoQlB95M+qOw==
 
-"@thirdweb-dev/react@2.4.4":
-  version "2.4.4"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/react/-/react-2.4.4.tgz#d5ad2509c14f1309f63df5d3064a878edf5b94d7"
-  integrity sha512-GcvsyhL+H8gsrCIJ1PeVJengq3KSylQ0xYXBlVqrpYZUmE91SqWMyKD2P+9M0xMRK9aT18ak7qcfCO+61cA4IQ==
+"@thirdweb-dev/react@2.4.5":
+  version "2.4.5"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/react/-/react-2.4.5.tgz#430a375895537795315d0388eac95553451ff822"
+  integrity sha512-rkXr7OTf6QT9R6hAdKuutZ0DoTyjQjjLbs6v3P+n94uzMMQQ7UYtckEqMTMeHdNHxO+Q41i1HzDw4MH6Ozcsiw==
   dependencies:
     "@gnosis.pm/safe-core-sdk" "2.1.0"
     "@gnosis.pm/safe-ethers-adapters" "0.1.0-alpha.9"
@@ -1507,12 +1507,12 @@
     tiny-invariant "^1.2.0"
     wagmi "^0.2.28"
 
-"@thirdweb-dev/sdk@^2.3.14":
-  version "2.3.14"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/sdk/-/sdk-2.3.14.tgz#010de932fdd82b4826aa4facb97b3c4d56cd0af2"
-  integrity sha512-jo868pMYCg80VZDJvLn/R4rssHvvZGg/e5AtPLSnFjqH8vJ3ClX9Wtn0r6k6M3Sn64yi9dNiO3uA3GBDIyQ2EQ==
+"@thirdweb-dev/sdk@2.3.16":
+  version "2.3.16"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/sdk/-/sdk-2.3.16.tgz#4c54de2b7920444a4b495bda049635687afff268"
+  integrity sha512-gkBeEt/Og2nmHfSFR/U/IJPGUwMOmAcp30mH2ryAutcnkNOdjk284I1XQA2GGqGnERhbe1PTj8I2afsr63Zm+w==
   dependencies:
-    "@thirdweb-dev/contracts" "2.3.14"
+    "@thirdweb-dev/contracts" "2.3.15-0"
     "@web-std/file" "^3.0.0"
     cbor "^8.1.0"
     cross-fetch "^3.1.5"
